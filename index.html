@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+
+    <link rel="stylesheet" href="tic_tac_toe.css">
+</head>
+<body>
+    <h1><b><i>Tic-Tac-Toe</i></b></h1>
+
+    
+    <div class="mode-select">
+        <label for="gameMode">Game Mode:</label>
+        <select id="gameMode">
+            <option value="pvp">Player vs Player</option>
+            <option value="pvc">Player vs Computer</option>
+        </select>
+    </div>
+    
+    <div class="player_inputs">
+  <label for="inputPlayerX">Player X Name:</label>
+  <input type="text" id="inputPlayerX" placeholder="Player X" />
+
+  <label for="inputPlayerO">Player O Name:</label>
+  <input type="text" id="inputPlayerO" placeholder="Player O" />
+</div>
+
+    <div class = "game">
+
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+        <div class="button"></div>
+
+    </div>
+
+        <button class="reset"> <i><b>RESET</b></i></button>
+
+        <script src="tic_tac_toe.js" defer></script>
+</body>
+</html>

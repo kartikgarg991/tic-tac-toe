@@ -10,36 +10,52 @@
 <body>
     <h1><b><i>Tic-Tac-Toe</i></b></h1>
 
-    
-    <div class="mode-select">
-        <label for="gameMode">Game Mode:</label>
-        <select id="gameMode">
-            <option value="pvp">Player vs Player</option>
-            <option value="pvc">Player vs Computer</option>
-        </select>
-    </div>
-    
-    <div class="player_inputs">
-  <label for="inputPlayerX">Player X Name:</label>
-  <input type="text" id="inputPlayerX" placeholder="Player X" />
+    <div class ="container">
 
-  <label for="inputPlayerO">Player O Name:</label>
-  <input type="text" id="inputPlayerO" placeholder="Player O" />
-</div>
+   
 
-    <div class = "game">
+        <div class ="sidebar">
+            
+            <!-- Game Selection -->
+            <label class ="mode_heading">Game Mode  : </label>
+            <br>
+            <select id="mode">
+                <option value="pvp">Player vs Player</option>
+                <option value="pvc">Player vs Computer</option>
+            </select>
+            
+            <!-- Player1 input  -->
+            <label class ="mode_heading" >Player X Name:</label>
+            <br>
+            <input type="text" id="player1" placeholder="Player X" autocomplete="off" >
+            <br>
 
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
-        <div class="button"></div>
+            <!-- Player2 input  -->
+            <label class ="mode_heading" >Player O Name:</label>
+            <br>
+            <input type="text" id="player2" placeholder="Player O"autocomplete="off" >
+            <br>
 
-    </div>
+            <!-- voice  -->
+            <button id="voiceBtn">🎤 Speak Move</button>
+
+        </div>
+
+        <div class = "game">
+
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+            <div class="button"></div>
+
+        </div>
+
+     </div>
 
         <button class="reset"> <i><b>RESET</b></i></button>
 

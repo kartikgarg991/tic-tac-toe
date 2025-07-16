@@ -17,29 +17,37 @@ h1{
     margin: 0px 0px 40px 0px;
 }
 
-.player_inputs,
-.mode-select {
-/* font-size: 0.rem; */
-  color: white;
-  margin: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; 
-  gap: 10px;
+.container{
+    display: flex;
+    justify-content: center; /* keeps it centered horizontally */
+    align-items: flex-start; /* aligns items from top */
+    gap: 40px; /* space between sidebar and game */
+    padding: 20px;
 }
 
-.player_inputs input,
-.mode-select select {
-  border-radius: 10px;
-  min-height: 45px;
-  background-color: #eaeff7;
-  color: #004d40;
-  padding: 8px 12px;
-  font-size: 1rem;
-  border: 2px solid #00bcd4;
-  width: 250px;
+.mode_heading{
+    display: block;
+    padding-top:  20px;
+    color: white;
 }
 
+input[type="text"],
+select {
+ padding :10px;
+ border-radius: 10%;
+ background-color:  rgb(243, 250, 255);
+}
+
+#voiceBtn{
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 30px ;
+    height: 50px;
+    width: 120px;
+    color: rgb(12, 12, 12);
+    border-radius: 15%;
+}
 
 
 .game{
@@ -117,7 +125,7 @@ h1{
 .win {
     position: relative;
     animation: ghumav1 2s ease-in-out 0s infinite alternate ;
-    background-color : rgb(224, 87, 42) ;
+    background-color : rgb(243, 138, 103) ;
 }
 
 @keyframes ghumav1 {

@@ -1,4 +1,4 @@
-let buttons = document.querySelectorAll(".button");
+const buttons = document.querySelectorAll(".button");
 
 let TurnX = true;
 let gameOver = false;
@@ -9,12 +9,13 @@ const defaultO = "Player O";
 
 const p1Input = document.querySelector("#player1");
 const p2Input = document.querySelector("#player2");
-const gameSelection = document.querySelector("#mode");
+const voiceBtn = document.querySelector("#voiceBtn");
+const reset = document.querySelector(".reset");
 
 
-// =========================
+// =====================================================
 // PLAYER NAME VOICE
-// =========================
+// =====================================================
 
 p1Input.addEventListener("change", () => {
     const name = p1Input.value.trim();
@@ -37,9 +38,9 @@ p2Input.addEventListener("change", () => {
 });
 
 
-// =========================
+// =====================================================
 // WINNING PATTERNS
-// =========================
+// =====================================================
 
 const winPatterns = [
     [0, 1, 2],
@@ -55,49 +56,9 @@ const winPatterns = [
 ];
 
 
-// =========================
-// MAKE MOVE
-// =========================
-
-const makeMove = (idx) => {
-
-    // Don't allow move if game is over
-    // or cell is already occupied
-    if (buttons[idx].textContent !== "" || gameOver) {
-        return;
-    }
-
-    if (TurnX) {
-        buttons[idx].textContent = "X";
-        buttons[idx].classList.add("x-style");
-    } else {
-        buttons[idx].textContent = "O";
-        buttons[idx].classList.add("o-style");
-    }
-
-    TurnX = !TurnX;
-    count++;
-
-    checkWinner();
-};
-
-
-// =========================
-// NORMAL CLICK
-// =========================
-
-buttons.forEach((button, idx) => {
-
-    button.addEventListener("click", () => {
-        makeMove(idx);
-    });
-
-});
-
-
-// =========================
+// =====================================================
 // CHECK WINNER
-// =========================
+// =====================================================
 
 const checkWinner = () => {
 
@@ -111,7 +72,6 @@ const checkWinner = () => {
         const valueY = buttons[y].textContent;
         const valueZ = buttons[z].textContent;
 
-        // Check winning combination
         if (
             valueX !== "" &&
             valueX === valueY &&
@@ -123,25 +83,22 @@ const checkWinner = () => {
             buttons[y].classList.add("win");
             buttons[z].classList.add("win");
 
-
-            // Get player names
+            // Player names
             const nameX = p1Input.value.trim() || defaultX;
             const nameO = p2Input.value.trim() || defaultO;
 
-
-            // Determine winner
+            // Find winner
             const winner = valueX === "X" ? nameX : nameO;
 
             const message = `${winner} Won The Game`;
 
             gameOver = true;
 
-
-            // Speak winner
             setTimeout(() => {
 
-                const speak = new SpeechSynthesisUtterance(message);
-                speechSynthesis.speak(speak);
+                speechSynthesis.speak(
+                    new SpeechSynthesisUtterance(message)
+                );
 
                 alert(message);
 
@@ -152,9 +109,9 @@ const checkWinner = () => {
     }
 
 
-    // =========================
+    // =================================================
     // DRAW
-    // =========================
+    // =================================================
 
     if (count === 9 && !gameOver) {
 
@@ -162,23 +119,78 @@ const checkWinner = () => {
 
         gameOver = true;
 
-        const speak = new SpeechSynthesisUtterance(message);
-        speechSynthesis.speak(speak);
+        speechSynthesis.speak(
+            new SpeechSynthesisUtterance(message)
+        );
 
         setTimeout(() => {
             alert(message);
         }, 200);
-
-        return;
     }
 };
 
 
-// =========================
-// RESET GAME
-// =========================
+// =====================================================
+// MAKE MOVE
+// =====================================================
 
-const reset = document.querySelector(".reset");
+const makeMove = (idx) => {
+
+    // Game over or cell already occupied
+    if (
+        gameOver ||
+        buttons[idx].textContent !== ""
+    ) {
+        return false;
+    }
+
+
+    // Player X
+    if (TurnX) {
+
+        buttons[idx].textContent = "X";
+        buttons[idx].classList.add("x-style");
+
+    }
+
+    // Player O
+    else {
+
+        buttons[idx].textContent = "O";
+        buttons[idx].classList.add("o-style");
+
+    }
+
+
+    // Change turn
+    TurnX = !TurnX;
+
+    count++;
+
+    checkWinner();
+
+    return true;
+};
+
+
+// =====================================================
+// NORMAL CLICK
+// =====================================================
+
+buttons.forEach((button, idx) => {
+
+    button.addEventListener("click", () => {
+
+        makeMove(idx);
+
+    });
+
+});
+
+
+// =====================================================
+// RESET
+// =====================================================
 
 reset.addEventListener("click", () => {
 
@@ -199,165 +211,369 @@ reset.addEventListener("click", () => {
     p1Input.value = "";
     p2Input.value = "";
 
-    // Stop any current speech
+    // Stop speech
     speechSynthesis.cancel();
 });
 
 
-// =========================
-// VOICE INPUT
-// =========================
-
-const voiceBtn = document.querySelector("#voiceBtn");
+// =====================================================
+// VOICE RECOGNITION
+// =====================================================
 
 const SpeechRec =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
 
-// Only setup voice recognition if browser supports it
 if (SpeechRec && voiceBtn) {
 
     const recognizer = new SpeechRec();
 
     recognizer.lang = "en-US";
+
     recognizer.interimResults = false;
-    recognizer.maxAlternatives = 1;
+
+    recognizer.maxAlternatives = 5;
 
     let isListening = false;
 
 
-    // =========================
+    // =================================================
     // VOICE BUTTON
-    // =========================
+    // =================================================
 
     voiceBtn.addEventListener("click", () => {
 
-        // Don't listen after game is over
-        if (gameOver || isListening) {
+        if (gameOver) {
+            return;
+        }
+
+        if (isListening) {
             return;
         }
 
         try {
+
             recognizer.start();
+
         } catch (error) {
-            console.log("Speech recognition error:", error);
+
+            console.log(
+                "Could not start speech recognition:",
+                error
+            );
+
         }
     });
 
 
-    // =========================
-    // START LISTENING
-    // =========================
+    // =================================================
+    // RECOGNITION START
+    // =================================================
 
     recognizer.addEventListener("start", () => {
+
         isListening = true;
-        console.log("Listening...");
+
+        console.log("🎤 Listening...");
+
     });
 
 
-    // =========================
-    // STOP LISTENING
-    // =========================
+    // =================================================
+    // RECOGNITION END
+    // =================================================
 
     recognizer.addEventListener("end", () => {
+
         isListening = false;
-        console.log("Stopped listening");
+
+        console.log("🎤 Stopped listening");
+
     });
 
 
-    // =========================
+    // =================================================
     // VOICE RESULT
-    // =========================
+    // =================================================
 
     recognizer.addEventListener("result", (e) => {
 
-        const spoken = e.results[0][0].transcript
+        // Get what browser heard
+        let spoken = e.results[0][0].transcript;
+
+        console.log("RAW SPEECH:", spoken);
+
+
+        // =================================================
+        // NORMALIZE SPEECH
+        // =================================================
+
+        spoken = spoken
+            .toLowerCase()
             .trim()
-            .toLowerCase();
+            .replace(/[.,!?]/g, "")
+            .replace(/-/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
 
-        console.log("You said:", spoken);
+        console.log("NORMALIZED SPEECH:", spoken);
 
 
-        // Map voice commands to board positions
+        // =================================================
+        // DIRECT COMMANDS
+        // =================================================
+
         const moveMap = {
 
+            // Top row
             "top left": 0,
             "top middle": 1,
+            "top center": 1,
             "top right": 2,
 
+            // Middle row
             "middle left": 3,
             "middle": 4,
+            "center": 4,
+            "middle center": 4,
             "middle right": 5,
 
+            // Bottom row
             "bottom left": 6,
             "bottom middle": 7,
-            "bottom right": 8
+            "bottom center": 7,
+            "bottom right": 8,
 
+            // Alternative wording
+            "upper left": 0,
+            "upper middle": 1,
+            "upper center": 1,
+            "upper right": 2,
+
+            "lower left": 6,
+            "lower middle": 7,
+            "lower center": 7,
+            "lower right": 8
         };
 
 
-        const idx = moveMap[spoken];
+        // =================================================
+        // EXACT MATCH
+        // =================================================
+
+        let idx = moveMap[spoken];
 
 
-        // =========================
-        // INVALID VOICE COMMAND
-        // =========================
+        // =================================================
+        // HANDLE EXTRA WORDS
+        // =================================================
 
         if (idx === undefined) {
 
-            const message =
-                `I heard "${spoken}", but that's not a valid move`;
+            if (
+                spoken.includes("top") &&
+                spoken.includes("left")
+            ) {
+                idx = 0;
+            }
+
+            else if (
+                spoken.includes("top") &&
+                (
+                    spoken.includes("middle") ||
+                    spoken.includes("center") ||
+                    spoken.includes("centre")
+                )
+            ) {
+                idx = 1;
+            }
+
+            else if (
+                spoken.includes("top") &&
+                spoken.includes("right")
+            ) {
+                idx = 2;
+            }
+
+            else if (
+                spoken.includes("middle") &&
+                spoken.includes("left")
+            ) {
+                idx = 3;
+            }
+
+            else if (
+                (
+                    spoken.includes("middle") ||
+                    spoken.includes("center") ||
+                    spoken.includes("centre")
+                ) &&
+                !spoken.includes("left") &&
+                !spoken.includes("right")
+            ) {
+                idx = 4;
+            }
+
+            else if (
+                spoken.includes("middle") &&
+                spoken.includes("right")
+            ) {
+                idx = 5;
+            }
+
+            else if (
+                spoken.includes("bottom") &&
+                spoken.includes("left")
+            ) {
+                idx = 6;
+            }
+
+            else if (
+                spoken.includes("bottom") &&
+                (
+                    spoken.includes("middle") ||
+                    spoken.includes("center") ||
+                    spoken.includes("centre")
+                )
+            ) {
+                idx = 7;
+            }
+
+            else if (
+                spoken.includes("bottom") &&
+                spoken.includes("right")
+            ) {
+                idx = 8;
+            }
+
+            else if (
+                spoken.includes("upper") &&
+                spoken.includes("left")
+            ) {
+                idx = 0;
+            }
+
+            else if (
+                spoken.includes("upper") &&
+                spoken.includes("right")
+            ) {
+                idx = 2;
+            }
+
+            else if (
+                spoken.includes("lower") &&
+                spoken.includes("left")
+            ) {
+                idx = 6;
+            }
+
+            else if (
+                spoken.includes("lower") &&
+                spoken.includes("right")
+            ) {
+                idx = 8;
+            }
+        }
+
+
+        // =================================================
+        // INVALID COMMAND
+        // =================================================
+
+        if (idx === undefined) {
+
+            console.log(
+                "❌ Invalid voice command:",
+                spoken
+            );
 
             speechSynthesis.speak(
-                new SpeechSynthesisUtterance(message)
+                new SpeechSynthesisUtterance(
+                    `I heard ${spoken}, but that's not a valid move`
+                )
             );
 
             return;
         }
 
 
-        // =========================
-        // OCCUPIED CELL
-        // =========================
+        // =================================================
+        // CELL ALREADY FILLED
+        // =================================================
 
-        if (buttons[idx].textContent !== "" || gameOver) {
-
-            const message =
-                `Can't move to ${spoken}, try another`;
+        if (buttons[idx].textContent !== "") {
 
             speechSynthesis.speak(
-                new SpeechSynthesisUtterance(message)
+                new SpeechSynthesisUtterance(
+                    "That cell is already occupied. Try another."
+                )
             );
 
             return;
         }
 
 
-        // =========================
+        // =================================================
+        // GAME OVER
+        // =================================================
+
+        if (gameOver) {
+            return;
+        }
+
+
+        // =================================================
         // MAKE VOICE MOVE
-        // =========================
+        // =================================================
+
+        console.log(
+            "✅ Voice move:",
+            spoken,
+            "=> cell",
+            idx
+        );
 
         makeMove(idx);
+
     });
 
 
-    // =========================
-    // SPEECH ERROR
-    // =========================
+    // =================================================
+    // VOICE ERROR
+    // =================================================
 
     recognizer.addEventListener("error", (e) => {
 
         isListening = false;
 
-        console.log("Speech recognition error:", e.error);
+        console.log(
+            "❌ Speech recognition error:",
+            e.error
+        );
+
+        if (e.error === "not-allowed") {
+
+            alert(
+                "Microphone permission is blocked. Please allow microphone access in Chrome."
+            );
+
+        }
 
     });
 
-} else {
+}
 
-    // Browser doesn't support speech recognition
-    console.log("Speech Recognition is not supported in this browser.");
+
+// =====================================================
+// BROWSER DOES NOT SUPPORT SPEECH RECOGNITION
+// =====================================================
+
+else {
+
+    console.log(
+        "Speech Recognition is not supported in this browser."
+    );
 
     if (voiceBtn) {
         voiceBtn.disabled = true;

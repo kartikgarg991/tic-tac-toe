@@ -14,32 +14,41 @@ const reset = document.querySelector(".reset");
 
 
 // =====================================================
-// PLAYER NAME VOICE
+// PLAYER NAME
 // =====================================================
 
 p1Input.addEventListener("change", () => {
     const name = p1Input.value.trim();
 
     if (name) {
+        speechSynthesis.cancel();
+
         speechSynthesis.speak(
-            new SpeechSynthesisUtterance(`Player X is now ${name}`)
+            new SpeechSynthesisUtterance(
+                `Player X is now ${name}`
+            )
         );
     }
 });
+
 
 p2Input.addEventListener("change", () => {
     const name = p2Input.value.trim();
 
     if (name) {
+        speechSynthesis.cancel();
+
         speechSynthesis.speak(
-            new SpeechSynthesisUtterance(`Player O is now ${name}`)
+            new SpeechSynthesisUtterance(
+                `Player O is now ${name}`
+            )
         );
     }
 });
 
 
 // =====================================================
-// WINNING PATTERNS
+// WIN PATTERNS
 // =====================================================
 
 const winPatterns = [
@@ -62,35 +71,35 @@ const winPatterns = [
 
 const checkWinner = () => {
 
-    for (const patt of winPatterns) {
+    for (const pattern of winPatterns) {
 
-        const x = patt[0];
-        const y = patt[1];
-        const z = patt[2];
+        const [a, b, c] = pattern;
 
-        const valueX = buttons[x].textContent;
-        const valueY = buttons[y].textContent;
-        const valueZ = buttons[z].textContent;
+        const valueA = buttons[a].textContent;
+        const valueB = buttons[b].textContent;
+        const valueC = buttons[c].textContent;
 
         if (
-            valueX !== "" &&
-            valueX === valueY &&
-            valueY === valueZ
+            valueA !== "" &&
+            valueA === valueB &&
+            valueB === valueC
         ) {
 
-            // Highlight winning boxes
-            buttons[x].classList.add("win");
-            buttons[y].classList.add("win");
-            buttons[z].classList.add("win");
+            buttons[a].classList.add("win");
+            buttons[b].classList.add("win");
+            buttons[c].classList.add("win");
 
-            // Player names
-            const nameX = p1Input.value.trim() || defaultX;
-            const nameO = p2Input.value.trim() || defaultO;
+            const nameX =
+                p1Input.value.trim() || defaultX;
 
-            // Find winner
-            const winner = valueX === "X" ? nameX : nameO;
+            const nameO =
+                p2Input.value.trim() || defaultO;
 
-            const message = `${winner} Won The Game`;
+            const winner =
+                valueA === "X" ? nameX : nameO;
+
+            const message =
+                `${winner} Won The Game`;
 
             gameOver = true;
 
@@ -109,9 +118,7 @@ const checkWinner = () => {
     }
 
 
-    // =================================================
     // DRAW
-    // =================================================
 
     if (count === 9 && !gameOver) {
 
@@ -134,42 +141,35 @@ const checkWinner = () => {
 // MAKE MOVE
 // =====================================================
 
-const makeMove = (idx) => {
+const makeMove = (index) => {
 
-    // Game over or cell already occupied
-    if (
-        gameOver ||
-        buttons[idx].textContent !== ""
-    ) {
-        return false;
+    if (gameOver) {
+        return;
+    }
+
+    if (buttons[index].textContent !== "") {
+        return;
     }
 
 
-    // Player X
     if (TurnX) {
 
-        buttons[idx].textContent = "X";
-        buttons[idx].classList.add("x-style");
+        buttons[index].textContent = "X";
+        buttons[index].classList.add("x-style");
+
+    } else {
+
+        buttons[index].textContent = "O";
+        buttons[index].classList.add("o-style");
 
     }
 
-    // Player O
-    else {
 
-        buttons[idx].textContent = "O";
-        buttons[idx].classList.add("o-style");
-
-    }
-
-
-    // Change turn
     TurnX = !TurnX;
 
     count++;
 
     checkWinner();
-
-    return true;
 };
 
 
@@ -177,11 +177,11 @@ const makeMove = (idx) => {
 // NORMAL CLICK
 // =====================================================
 
-buttons.forEach((button, idx) => {
+buttons.forEach((button, index) => {
 
     button.addEventListener("click", () => {
 
-        makeMove(idx);
+        makeMove(index);
 
     });
 
@@ -204,32 +204,43 @@ reset.addEventListener("click", () => {
 
     });
 
+    TurnX = true;
     gameOver = false;
     count = 0;
-    TurnX = true;
 
     p1Input.value = "";
     p2Input.value = "";
 
-    // Stop speech
     speechSynthesis.cancel();
 });
 
 
 // =====================================================
-// VOICE RECOGNITION
+// SPEECH RECOGNITION
 // =====================================================
 
-const SpeechRec =
+const SpeechRecognition =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
 
-if (SpeechRec && voiceBtn) {
+if (!SpeechRecognition) {
 
-    const recognizer = new SpeechRec();
+    console.error(
+        "Speech Recognition is NOT supported."
+    );
+
+    if (voiceBtn) {
+        voiceBtn.disabled = true;
+    }
+
+} else {
+
+    const recognizer = new SpeechRecognition();
 
     recognizer.lang = "en-US";
+
+    recognizer.continuous = false;
 
     recognizer.interimResults = false;
 
@@ -239,7 +250,7 @@ if (SpeechRec && voiceBtn) {
 
 
     // =================================================
-    // VOICE BUTTON
+    // START
     // =================================================
 
     voiceBtn.addEventListener("click", () => {
@@ -258,239 +269,136 @@ if (SpeechRec && voiceBtn) {
 
         } catch (error) {
 
-            console.log(
-                "Could not start speech recognition:",
+            console.error(
+                "Recognition start error:",
                 error
             );
 
         }
+
     });
 
 
     // =================================================
-    // RECOGNITION START
+    // START EVENT
     // =================================================
 
     recognizer.addEventListener("start", () => {
 
         isListening = true;
 
-        console.log("🎤 Listening...");
+        console.log("🎤 LISTENING...");
 
     });
 
 
     // =================================================
-    // RECOGNITION END
+    // END EVENT
     // =================================================
 
     recognizer.addEventListener("end", () => {
 
         isListening = false;
 
-        console.log("🎤 Stopped listening");
+        console.log("🎤 STOPPED");
 
     });
 
 
     // =================================================
-    // VOICE RESULT
+    // RESULT
     // =================================================
 
-    recognizer.addEventListener("result", (e) => {
+    recognizer.addEventListener("result", (event) => {
 
-        // Get what browser heard
-        let spoken = e.results[0][0].transcript;
-
-        console.log("RAW SPEECH:", spoken);
-
-
-        // =================================================
-        // NORMALIZE SPEECH
-        // =================================================
-
-        spoken = spoken
-            .toLowerCase()
-            .trim()
-            .replace(/[.,!?]/g, "")
-            .replace(/-/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-
-        console.log("NORMALIZED SPEECH:", spoken);
+        console.log("================================");
+        console.log("🎤 SPEECH RESULT");
+        console.log("================================");
 
 
-        // =================================================
-        // DIRECT COMMANDS
-        // =================================================
+        // ---------------------------------------------
+        // GET ALL ALTERNATIVES
+        // ---------------------------------------------
 
-        const moveMap = {
+        const alternatives = [];
 
-            // Top row
-            "top left": 0,
-            "top middle": 1,
-            "top center": 1,
-            "top right": 2,
+        const results =
+            event.results[0];
 
-            // Middle row
-            "middle left": 3,
-            "middle": 4,
-            "center": 4,
-            "middle center": 4,
-            "middle right": 5,
+        for (
+            let i = 0;
+            i < results.length;
+            i++
+        ) {
 
-            // Bottom row
-            "bottom left": 6,
-            "bottom middle": 7,
-            "bottom center": 7,
-            "bottom right": 8,
+            const text =
+                results[i].transcript
+                    .toLowerCase()
+                    .trim();
 
-            // Alternative wording
-            "upper left": 0,
-            "upper middle": 1,
-            "upper center": 1,
-            "upper right": 2,
+            alternatives.push(text);
 
-            "lower left": 6,
-            "lower middle": 7,
-            "lower center": 7,
-            "lower right": 8
-        };
-
-
-        // =================================================
-        // EXACT MATCH
-        // =================================================
-
-        let idx = moveMap[spoken];
-
-
-        // =================================================
-        // HANDLE EXTRA WORDS
-        // =================================================
-
-        if (idx === undefined) {
-
-            if (
-                spoken.includes("top") &&
-                spoken.includes("left")
-            ) {
-                idx = 0;
-            }
-
-            else if (
-                spoken.includes("top") &&
-                (
-                    spoken.includes("middle") ||
-                    spoken.includes("center") ||
-                    spoken.includes("centre")
-                )
-            ) {
-                idx = 1;
-            }
-
-            else if (
-                spoken.includes("top") &&
-                spoken.includes("right")
-            ) {
-                idx = 2;
-            }
-
-            else if (
-                spoken.includes("middle") &&
-                spoken.includes("left")
-            ) {
-                idx = 3;
-            }
-
-            else if (
-                (
-                    spoken.includes("middle") ||
-                    spoken.includes("center") ||
-                    spoken.includes("centre")
-                ) &&
-                !spoken.includes("left") &&
-                !spoken.includes("right")
-            ) {
-                idx = 4;
-            }
-
-            else if (
-                spoken.includes("middle") &&
-                spoken.includes("right")
-            ) {
-                idx = 5;
-            }
-
-            else if (
-                spoken.includes("bottom") &&
-                spoken.includes("left")
-            ) {
-                idx = 6;
-            }
-
-            else if (
-                spoken.includes("bottom") &&
-                (
-                    spoken.includes("middle") ||
-                    spoken.includes("center") ||
-                    spoken.includes("centre")
-                )
-            ) {
-                idx = 7;
-            }
-
-            else if (
-                spoken.includes("bottom") &&
-                spoken.includes("right")
-            ) {
-                idx = 8;
-            }
-
-            else if (
-                spoken.includes("upper") &&
-                spoken.includes("left")
-            ) {
-                idx = 0;
-            }
-
-            else if (
-                spoken.includes("upper") &&
-                spoken.includes("right")
-            ) {
-                idx = 2;
-            }
-
-            else if (
-                spoken.includes("lower") &&
-                spoken.includes("left")
-            ) {
-                idx = 6;
-            }
-
-            else if (
-                spoken.includes("lower") &&
-                spoken.includes("right")
-            ) {
-                idx = 8;
-            }
+            console.log(
+                `Alternative ${i + 1}:`,
+                text,
+                "confidence:",
+                results[i].confidence
+            );
         }
 
 
-        // =================================================
-        // INVALID COMMAND
-        // =================================================
+        // ---------------------------------------------
+        // NORMALIZE
+        // ---------------------------------------------
 
-        if (idx === undefined) {
+        const normalized = alternatives.map(text => {
+
+            return text
+                .replace(/[.,!?]/g, "")
+                .replace(/-/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+
+        });
+
+
+        console.log(
+            "Normalized:",
+            normalized
+        );
+
+
+        // ---------------------------------------------
+        // DETECT MOVE
+        // ---------------------------------------------
+
+        let index = null;
+
+
+        for (const text of normalized) {
+
+            index = detectMove(text);
+
+            if (index !== null) {
+                break;
+            }
+
+        }
+
+
+        // ---------------------------------------------
+        // INVALID
+        // ---------------------------------------------
+
+        if (index === null) {
 
             console.log(
-                "❌ Invalid voice command:",
-                spoken
+                "❌ MOVE NOT DETECTED"
             );
 
             speechSynthesis.speak(
                 new SpeechSynthesisUtterance(
-                    `I heard ${spoken}, but that's not a valid move`
+                    "I couldn't understand the position. Please say top left, top middle, or top right."
                 )
             );
 
@@ -498,11 +406,16 @@ if (SpeechRec && voiceBtn) {
         }
 
 
-        // =================================================
-        // CELL ALREADY FILLED
-        // =================================================
+        // ---------------------------------------------
+        // CELL OCCUPIED
+        // ---------------------------------------------
 
-        if (buttons[idx].textContent !== "") {
+        if (buttons[index].textContent !== "") {
+
+            console.log(
+                "❌ CELL ALREADY OCCUPIED:",
+                index
+            );
 
             speechSynthesis.speak(
                 new SpeechSynthesisUtterance(
@@ -514,48 +427,44 @@ if (SpeechRec && voiceBtn) {
         }
 
 
-        // =================================================
-        // GAME OVER
-        // =================================================
-
-        if (gameOver) {
-            return;
-        }
-
-
-        // =================================================
-        // MAKE VOICE MOVE
-        // =================================================
+        // ---------------------------------------------
+        // MAKE MOVE
+        // ---------------------------------------------
 
         console.log(
-            "✅ Voice move:",
-            spoken,
-            "=> cell",
-            idx
+            "✅ MOVE DETECTED:",
+            index
         );
 
-        makeMove(idx);
+        makeMove(index);
 
     });
 
 
     // =================================================
-    // VOICE ERROR
+    // SPEECH ERROR
     // =================================================
 
-    recognizer.addEventListener("error", (e) => {
+    recognizer.addEventListener("error", (event) => {
 
         isListening = false;
 
-        console.log(
-            "❌ Speech recognition error:",
-            e.error
+        console.error(
+            "❌ SPEECH ERROR:",
+            event.error
         );
 
-        if (e.error === "not-allowed") {
+
+        if (event.error === "not-allowed") {
 
             alert(
-                "Microphone permission is blocked. Please allow microphone access in Chrome."
+                "Microphone permission denied. Allow microphone access in Chrome."
+            );
+
+        } else if (event.error === "no-speech") {
+
+            console.log(
+                "No speech detected."
             );
 
         }
@@ -566,16 +475,175 @@ if (SpeechRec && voiceBtn) {
 
 
 // =====================================================
-// BROWSER DOES NOT SUPPORT SPEECH RECOGNITION
+// MOVE DETECTOR
 // =====================================================
 
-else {
+function detectMove(text) {
 
-    console.log(
-        "Speech Recognition is not supported in this browser."
-    );
+    // ---------------------------------------------
+    // EXACT / NORMAL COMMANDS
+    // ---------------------------------------------
 
-    if (voiceBtn) {
-        voiceBtn.disabled = true;
+    const moveMap = {
+
+        "top left": 0,
+        "top middle": 1,
+        "top center": 1,
+        "top centre": 1,
+        "top right": 2,
+
+        "middle left": 3,
+        "middle": 4,
+        "center": 4,
+        "centre": 4,
+        "middle center": 4,
+        "middle centre": 4,
+        "middle right": 5,
+
+        "bottom left": 6,
+        "bottom middle": 7,
+        "bottom center": 7,
+        "bottom centre": 7,
+        "bottom right": 8,
+
+        "upper left": 0,
+        "upper middle": 1,
+        "upper center": 1,
+        "upper right": 2,
+
+        "lower left": 6,
+        "lower middle": 7,
+        "lower center": 7,
+        "lower right": 8
+    };
+
+
+    if (moveMap[text] !== undefined) {
+        return moveMap[text];
     }
+
+
+    // ---------------------------------------------
+    // EXTRA WORDS
+    // ---------------------------------------------
+
+    if (
+        text.includes("top") &&
+        text.includes("left")
+    ) {
+        return 0;
+    }
+
+
+    if (
+        text.includes("top") &&
+        text.includes("right")
+    ) {
+        return 2;
+    }
+
+
+    if (
+        text.includes("top") &&
+        (
+            text.includes("middle") ||
+            text.includes("center") ||
+            text.includes("centre")
+        )
+    ) {
+        return 1;
+    }
+
+
+    if (
+        text.includes("middle") &&
+        text.includes("left")
+    ) {
+        return 3;
+    }
+
+
+    if (
+        text.includes("middle") &&
+        text.includes("right")
+    ) {
+        return 5;
+    }
+
+
+    if (
+        text.includes("bottom") &&
+        text.includes("left")
+    ) {
+        return 6;
+    }
+
+
+    if (
+        text.includes("bottom") &&
+        text.includes("right")
+    ) {
+        return 8;
+    }
+
+
+    if (
+        text.includes("bottom") &&
+        (
+            text.includes("middle") ||
+            text.includes("center") ||
+            text.includes("centre")
+        )
+    ) {
+        return 7;
+    }
+
+
+    // ---------------------------------------------
+    // COMMON SPEECH RECOGNITION MISTAKES
+    // ---------------------------------------------
+
+    const aliases = {
+
+        // "top left" commonly misheard
+        "top light": 0,
+        "top lite": 0,
+        "toplet": 0,
+        "top led": 0,
+        "stop left": 0,
+        "stop light": 0,
+
+        // top right
+        "top write": 2,
+        "top rite": 2,
+        "stop right": 2,
+
+        // top middle
+        "top metal": 1,
+        "top little": 1,
+
+        // middle left
+        "middle light": 3,
+        "middle lite": 3,
+
+        // middle right
+        "middle write": 5,
+        "middle rite": 5,
+
+        // bottom left
+        "bottom light": 6,
+        "bottom lite": 6,
+
+        // bottom right
+        "bottom write": 8,
+        "bottom rite": 8
+    };
+
+
+    if (aliases[text] !== undefined) {
+        return aliases[text];
+    }
+
+
+    return null;
 }

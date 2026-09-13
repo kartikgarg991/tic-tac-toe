@@ -1,136 +1,529 @@
-*{
-    padding: 0%;
-    margin: 0%;
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-    background-color: rgb(4, 44, 59);
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(30, 120, 150, 0.25),
+            transparent 40%
+        ),
+        linear-gradient(
+            135deg,
+            #031b25,
+            #042c3b 50%,
+            #021820
+        );
+
+    color: white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     overflow-x: hidden;
 }
 
-h1{
-    width : 100%;
-    font-size: 4vw;
-    background-color: rgb(222, 232, 240);
-    box-shadow: 0 0 100px #e62914;
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+h1 {
+    width: 100%;
+
+    padding: 18px 20px;
+
+    margin-bottom: 40px;
+
+    font-size: clamp(2rem, 4vw, 4rem);
+
     text-align: center;
-    margin: 0px 0px 40px 0px;
+
+    color: #062631;
+
+    background: rgba(222, 232, 240, 0.95);
+
+    box-shadow:
+        0 0 25px rgba(230, 41, 20, 0.35),
+        0 5px 30px rgba(0, 0, 0, 0.3);
+
+    letter-spacing: 2px;
 }
 
-.container{
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.container {
+    width: min(1100px, 95%);
+
+    margin: 0 auto;
+
     display: flex;
-    justify-content: center; /* keeps it centered horizontally */
-    align-items: flex-start; /* aligns items from top */
-    gap: 40px; /* space between sidebar and game */
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    gap: 70px;
+
     padding: 20px;
 }
 
-.mode_heading{
+
+/* =====================================================
+   SIDE / SETTINGS AREA
+===================================================== */
+
+.mode_heading {
     display: block;
-    padding-top:  20px;
-    color: white;
+
+    margin-bottom: 8px;
+
+    color: #eafaff;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    letter-spacing: 0.5px;
 }
+
+
+/* =====================================================
+   INPUTS + SELECT
+===================================================== */
 
 input[type="text"],
 select {
- padding :10px;
- border-radius: 10%;
- background-color:  rgb(243, 250, 255);
+    width: 190px;
+
+    padding: 12px 14px;
+
+    margin-bottom: 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: rgba(243, 250, 255, 0.95);
+
+    color: #102b34;
+
+    font-size: 15px;
+
+    transition:
+        0.25s ease;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-#voiceBtn{
-    display: block;
-    justify-content: center;
-    align-items: center;
-    margin: 50px 30px ;
-    height: 50px;
-    width: 120px;
-    color: rgb(12, 12, 12);
-    border-radius: 15%;
+
+input[type="text"]:focus,
+select:focus {
+    border-color: #65dfff;
+
+    box-shadow:
+        0 0 0 3px rgba(101, 223, 255, 0.15),
+        0 0 20px rgba(101, 223, 255, 0.25);
 }
 
 
-.game{
+/* =====================================================
+   VOICE BUTTON
+===================================================== */
+
+#voiceBtn {
+    width: 190px;
+    height: 52px;
+
+    margin: 25px 0;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #e9f8ff,
+            #c5e6f4
+        );
+
+    color: #062631;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.25),
+        0 0 20px rgba(139, 178, 241, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+#voiceBtn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(139, 178, 241, 0.45);
+}
+
+
+#voiceBtn:active {
+    transform: scale(0.96);
+}
+
+
+#voiceBtn:disabled {
+    opacity: 0.4;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =====================================================
+   GAME BOARD
+===================================================== */
+
+.game {
+    width: min(90vw, 420px);
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+
+    margin: 0 auto;
+
+    padding: 8px;
+}
+
+
+/* =====================================================
+   GAME BUTTONS
+===================================================== */
+
+.button {
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    border: 2px solid rgba(255, 255, 255, 0.35);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #eef7fc,
+            #d5e5ef
+        );
+
+    color: #12323c;
+
+    font-size: clamp(2.5rem, 7vw, 4rem);
+
+    font-weight: 800;
+
     display: flex;
-    flex-wrap: wrap;
 
-    width: clamp( 270px , 90vw , 400px);
-    margin :auto ;
     justify-content: center;
-}
 
-.button{
-    width : 20%;
-    aspect-ratio: 1/1;
-    background-color: rgb(222, 232, 240);
-    margin: 10px;
-    border: 2px solid black ;
-    box-shadow: 0 0 50px #8bb2f1;
-    border-radius: 20%;
-
-    font-size: 300%;
-    display: flex;
-    justify-content: center;
     align-items: center;
-    transition: all 0.4s ease-in;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        0 0 18px rgba(139, 178, 241, 0.2);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
-/*  add animation to what button is hovering */
-.button:hover{
-    background-color: #c8d9ed;
-    transform: scale(1.2);
+
+/* =====================================================
+   BUTTON HOVER
+===================================================== */
+
+.button:hover {
+    transform: translateY(-4px);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #dcecf6
+        );
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.3),
+        0 0 28px rgba(139, 178, 241, 0.4);
 }
 
-/* Style for X */
+
+/* =====================================================
+   BUTTON PRESS
+===================================================== */
+
+.button:active {
+    transform: scale(0.94);
+}
+
+
+/* =====================================================
+   X
+===================================================== */
+
 .x-style {
-    color: #1d4c55;
-    font-weight: bold;
-    text-shadow: 0 0 8px #00FFFF; 
+    color: #125766;
+
+    font-weight: 900;
+
+    text-shadow:
+        0 0 6px rgba(0, 255, 255, 0.7),
+        0 0 18px rgba(0, 255, 255, 0.45);
+
+    animation: appear 0.25s ease-out;
 }
 
-/* Style for O */
+
+/* =====================================================
+   O
+===================================================== */
+
 .o-style {
-    color:#1d4c55; 
-    font-weight: bold;
-    text-shadow: 0 0 8px #ff6868;
+    color: #7a3030;
+
+    font-weight: 900;
+
+    text-shadow:
+        0 0 6px rgba(255, 104, 104, 0.8),
+        0 0 18px rgba(255, 104, 104, 0.45);
+
+    animation: appear 0.25s ease-out;
 }
 
 
-.reset{
-    height: 50px;
-    width: 100px;
+/* =====================================================
+   X / O APPEAR ANIMATION
+===================================================== */
 
-    background-color:  rgb(222, 232, 240);
-    border: 2px solid black ;
-    box-shadow: 0 0 50px #8bb2f1;
-    border-radius: 15px;
+@keyframes appear {
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    0% {
+        transform: scale(0.4);
+        opacity: 0;
+    }
 
-    margin: 30px auto; 
-    color: black;
-    font-size: large;
-    transition: all 0.4s ease-in;
+    70% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
 
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
-.reset:hover{
-    background-color:  #c8d9ed;
-    transform: scale(1.2);
-}
 
+/* =====================================================
+   WINNING BOX
+===================================================== */
 
 .win {
-    position: relative;
-    animation: ghumav1 2s ease-in-out 0s infinite alternate ;
-    background-color : rgb(243, 138, 103) ;
+    background:
+        linear-gradient(
+            145deg,
+            #ffb08d,
+            #f37f69
+        );
+
+    border-color: #ffd5c5;
+
+    animation:
+        winning 0.8s ease-in-out infinite alternate;
+
+    box-shadow:
+        0 0 20px rgba(255, 137, 100, 0.7),
+        0 0 45px rgba(255, 91, 60, 0.45);
 }
 
-@keyframes ghumav1 {
-    0%{transform: rotate(200deg)}
-    100%
-    { transform: rotate(360deg);
-    transform: scale(1.2);} 
+
+/* =====================================================
+   WIN ANIMATION
+===================================================== */
+
+@keyframes winning {
+
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.08);
+    }
+}
+
+
+/* =====================================================
+   RESET BUTTON
+===================================================== */
+
+.reset {
+    width: 120px;
+    height: 50px;
+
+    margin: 35px auto;
+
+    border: 2px solid rgba(255, 255, 255, 0.25);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eaf6fb,
+            #cbdfe9
+        );
+
+    color: #092832;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.reset:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.3),
+        0 0 25px rgba(139, 178, 241, 0.35);
+}
+
+
+.reset:active {
+    transform: scale(0.95);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    h1 {
+        margin-bottom: 20px;
+
+        padding: 15px;
+
+        font-size: 2rem;
+    }
+
+
+    .container {
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 20px;
+
+        padding: 10px;
+    }
+
+
+    input[type="text"],
+    select,
+    #voiceBtn {
+        width: 260px;
+    }
+
+
+    .game {
+        width: min(92vw, 400px);
+
+        gap: 10px;
+
+        padding: 5px;
+    }
+
+
+    .button {
+        border-radius: 14px;
+    }
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media (max-width: 400px) {
+
+    .game {
+        width: 94vw;
+
+        gap: 8px;
+    }
+
+
+    .button {
+        border-radius: 12px;
+
+        font-size: 2.5rem;
+    }
 }
